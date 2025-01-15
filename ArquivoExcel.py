@@ -50,7 +50,7 @@ class ArquivoExcel:
 
     def delete_filtered_rows(self,spreadsheet_tab,selection_range):
         delete_cells = spreadsheet_tab.range(selection_range)
-        delete_cells = delete_cells.api.SpecialCells(12)
+        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
         for cell in delete_cells:
             cell.EntireRow.Delete()
         
@@ -103,3 +103,45 @@ class ArquivoExcel:
         formula_apply = f"=XLOOKUP({search_value},{search_array},{return_array})"
         spreadsheet_tab.range(formula_range).formula = formula_apply
     
+
+    #uso de filtros
+
+    def filter_apply(self,spreadsheet_tab,filter_column,filter):
+        spreadsheet_tab.range('A1').api.AutoFilter(filter_column,filter)
+        self.filtered = True
+
+    def filter_remove(self,spreadsheet_tab,filter_column):
+        if self.filtered == True:
+            spreadsheet_tab.range('A1').api.AutoFilter(filter_column)
+            self.filtered = False
+
+    def sort_table(self,spreadsheet_tab,complete_range,column):
+        spreadsheet_tab.range(complete_range).api.Sort(Key1 = spreadsheet_tab.range(column).api,
+                                                   Order1 =SortOrder.xlAscending,
+                                                   Header = 1,
+                                                   Orientation = 1)
+    
+    def clear_only_filtered(self,spreadsheet_tab,selection_range):
+        delete_cells = spreadsheet_tab.range(selection_range)
+        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells.ClearContents()
+    
+    def delete_only_filtered(self,spreadsheet_tab,selection_range):
+        xw.apps.active.api.DisplayAlerts = False
+        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells.EntireRow.Delete()
+
+    def select_filtered(self,spreadsheet_tab,selection_range):
+        return spreadsheet_tab.range(selection_range).api.SpecialCells(12)
+    
+    def verify_filtered(self,search_range,spreadsheet_tab):
+        try:
+            visibles = self.select_filtered(spreadsheet_tab,search_range)
+            if visibles.Count > 0:
+                return True
+        except Exception as e:
+            if "com_error" in str(e):
+                return False
+            else:
+                return False
+        
