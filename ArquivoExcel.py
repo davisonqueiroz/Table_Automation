@@ -75,9 +75,12 @@ class ArquivoExcel:
 
     #uso de formulas 
 
+    def formula_apply(self,spreadsheet_tab,cells,formula):
+        spreadsheet_tab.range(cells).formula = formula
+
     def text_join(self,delimiter,array,spreadsheet_tab,cell):
         formula_apply = f'=TEXTJOIN({delimiter},,{array})'
-        spreadsheet_tab.range(cell).formula = formula_apply
+        self.formula_apply(spreadsheet_tab,array,formula_apply)
 
     def text_join_msp(self,tab_name,cell):
         formula_apply = f'=TEXTJOIN(",",TRUE,UNIQUE(FILTER({tab_name}!F:F,({tab_name}!C:C=C{cell})*({tab_name}!L:L=G{cell}))))'
@@ -85,13 +88,13 @@ class ArquivoExcel:
     
     def concat_campus_code(self,spreadsheet_tab,first_cell,second_cell,apply_range):
         formula_apply = f'=CONCAT({first_cell},";campus_code:",{second_cell})'
-        spreadsheet_tab.range(apply_range).formula = formula_apply
+        self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
         self.convert_to_value(apply_range,spreadsheet_tab)
 
 
     def concat(self,spreadsheet_tab,first_cell,second_cell,apply_range):
         formula_apply = f'=CONCAT({first_cell},"-",{second_cell})'
-        spreadsheet_tab.range(apply_range).formula = formula_apply
+        self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
         self.convert_to_value(apply_range,spreadsheet_tab)
 
     def convert_to_value(self,conversion_range,spreadsheet_tab):
@@ -99,9 +102,9 @@ class ArquivoExcel:
         values = range.value
         range.value = [[val] for val in values]
     
-    def xlook_up(self,search_value,search_array,return_array,spreadsheet_tab,formula_range):
+    def xlook_up(self,search_value,search_array,return_array,spreadsheet_tab,apply_range):
         formula_apply = f"=XLOOKUP({search_value},{search_array},{return_array})"
-        spreadsheet_tab.range(formula_range).formula = formula_apply
+        self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
     
 
     #uso de filtros
