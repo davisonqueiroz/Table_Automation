@@ -147,4 +147,37 @@ class ArquivoExcel:
                 return False
             else:
                 return False
-        
+
+     #outros métodos
+
+    def replace(self,spreadsheet_tab,replace_range,original_value,new_value):
+        to_replace = spreadsheet_tab.range(replace_range)
+        to_replace.api.Replace(original_value,new_value)
+
+    def remove_duplicates(self,spreadsheet_tab,apply_range,duplicate_column):
+        spreadsheet_tab.range(apply_range).api.RemoveDuplicates(Columns = [duplicate_column],
+                                                                Header = 0)
+                        
+    def copy_and_paste(self,copy_tab,paste_tab,copy_range,paste_range):
+        copy_tab.range(copy_range).copy()
+        paste_tab.range(paste_range).paste()
+
+    def check_name_existence(self,name_from_verify,column,spreadsheet_tab):
+        for row in range(2,self.extract_last_filled_row(spreadsheet_tab,column) + 1):
+            if self.check_name(name_from_verify,column,spreadsheet_tab,row):
+                return True
+        return False
+    
+    def check_name(self,name_from_verify,column,spreadsheet_tab,row):
+        if name_from_verify in str(spreadsheet_tab.cells(row,column).value).strip():
+                return True
+        return False
+
+    def turn_into_text(self,spreadsheet_tab,column_cell,column):
+        conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column)}')
+        conversion.api.TextToColumns(Destination = conversion.api,
+        DataType = 1,
+        Semicolon = False )
+
+    def fill_with_value(self,spreadsheet_tab,fill_range,value):
+        spreadsheet_tab.range(fill_range).value = value
