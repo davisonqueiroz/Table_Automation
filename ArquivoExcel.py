@@ -31,6 +31,9 @@ class ArquivoExcel:
     def close_file_without_saving(self):
         self.book.saved = True
         self.close_file()
+
+    def create_tab(self,tab_name):
+        self.book.sheets.add(tab_name)
     
         #manipulação de linhas
 
@@ -61,6 +64,9 @@ class ArquivoExcel:
                 if cell_value == spreadsheet_tab.range(f"G{cell}").value:
                     spreadsheet_tab.range(f"G{cell}").api.EntireRow.Delete()
                     break
+
+    def last_row_from(self,spreadsheet_tab,column,row):
+        return spreadsheet_tab.cells(row,column).end('down').row
 
     #manipulação de colunas
 
