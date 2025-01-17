@@ -34,6 +34,9 @@ class ArquivoExcel:
 
     def create_tab(self,tab_name):
         self.book.sheets.add(tab_name)
+
+    def select_tab(self,tab_name):
+        return self.book.sheets[f'{tab_name}']
     
         #manipulação de linhas
 
