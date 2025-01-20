@@ -61,6 +61,20 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
                 for i in range(self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
                     if self.wk_book_msp.check_name("TÉCNICO ENFERMAGEM",i,8,self.tab_msp) and self.wk_book_msp.check_name("CRUZEIRO",i,2,self.tab_msp):
                         self.wk_book_msp.delete_row(self.tab_msp,i,8)   
+        
+    def filter_order_and_fill(self):
+        self.wk_book_msp.sort_table(self.tab_polo_portfolio,f"A1:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}","H1")
+        self.wk_book_msp.filter_apply(self.tab_polo_portfolio,8,"BRAZ CUBAS - TECNICO EAD")
+        filter_row = self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)
+        self.wk_book_msp.filter_remove(self.tab_polo_portfolio,8)
+
+        self.wk_book_msp.fill_with_value(self.tab_polo_portfolio,f"C2:C{filter_row}",46)
+        filter_row += 1
+        self.wk_book_msp.fill_with_value(self.tab_polo_portfolio,f"C{filter_row}:C{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}",27)
+
+
+    
+
 
         
         
