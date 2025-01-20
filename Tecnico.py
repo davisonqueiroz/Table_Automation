@@ -41,7 +41,11 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             self.wk_book_campus.turn_into_text(self.tab_campus,1,"I")
             self.wk_book_msp.filter_apply(self.tab_polo_enfermagem,5,"#N/A")
             if self.wk_book_msp.verify_filtered(f"A2:I{nursing_row}",self.tab_polo_enfermagem):
-                print("ERROR")
+                self.wk_book_msp.create_tab("Pendências Enfermagem")
+                self.tab_pend_enf = self.wk_book_msp.select_tab("Pendências Enfermagem")
+                self.wk_book_msp.copy_and_paste(self.tab_polo_enfermagem,self.tab_pend_enf,f"A1:I{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}","A1")
+                self.wk_book_msp.delete_filtered_rows(self.tab_polo_enfermagem,f"A2:I{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}")
+                self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
             else:
                 self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
                 self.wk_book_msp.convert_to_value(f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem)
