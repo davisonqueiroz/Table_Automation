@@ -72,9 +72,25 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
         filter_row += 1
         self.wk_book_msp.fill_with_value(self.tab_polo_portfolio,f"C{filter_row}:C{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}",27)
 
+    def apply_concats(self):
+        self.wk_book_msp.concat(self.tab_polo_portfolio,'C2','I2',f'B2:B{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}')
+        self.wk_book_msp.concat(self.tab_polo_portfolio,'C2','J2',f'E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}')
+        self.wk_book_campus.concat(self.tab_campus,'H2','I2',f'F2:F{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}')
+        self.wk_book_campus.concat(self.tab_campus,'H2','C2',f'G2:G{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}')
 
-    
+    def xlooup_and_treat_errors(self):
+        self.wk_book_msp.xlook_up("B2",f"'[{self.campus_name}]Sheet 1'!$F:$F",f"'[{self.campus_name}]Sheet 1'!$A:$A",self.tab_polo_portfolio,f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}")    
 
+        self.wk_book_msp.filter_apply(self.tab_polo_portfolio,4,"#N/A")
+        last_row = self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)
+        if self.wk_book_msp.verify_filtered(f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",self.tab_polo_portfolio):
+            self.wk_book_msp.create_tab("Polos com pendência")
+            self.tab_pend_polos = self.wk_book_msp.select_tab("Polos com pendência")
+            self.wk_book_msp.copy_and_paste(self.tab_polo_portfolio,self.tab_pend_polos,f"A1:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}","A1")
+            self.wk_book_msp.delete_filtered_rows(self.tab_polo_portfolio,f"A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}")
+            self.wk_book_msp.filter_remove(self.tab_polo_portfolio,4) 
+            self.wk_book_msp.sort_table(self.tab_polo_portfolio,f"A1:Q{last_row}","H1")
+            
 
         
         
