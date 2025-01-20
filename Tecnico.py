@@ -6,27 +6,57 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
 
     def spreadsheet_processing(self,file_msp,file_campus):
 
-        campus_name = os.path.basename(file_msp)
+        self.campus_name = os.path.basename(file_msp)
 
-        wk_book_msp = ArquivoExcel.ArquivoExcel(file_msp)
-        tab_msp = wk_book_msp.select_tab("Modelo Sem Parar")
-        tab_polo_portfolio = wk_book_msp.select_tab("Polo X Portfólio Técnico")
-        tab_polo_enfermagem = wk_book_msp.select_tab("Polo X Portfólio Tec Enfermagem")
+        self.wk_book_msp = ArquivoExcel.ArquivoExcel(file_msp)
+        self.tab_msp = self.wk_book_msp.select_tab("Modelo Sem Parar")
+        self.tab_polo_portfolio = self.wk_book_msp.select_tab("Polo X Portfólio Técnico")
+        self.tab_polo_enfermagem = self.wk_book_msp.select_tab("Polo X Portfólio Tec Enfermagem")
 
-        wk_book_campus = ArquivoExcel.ArquivoExcel(file_campus)
-        tab_campus = wk_book_campus.select_tab("Sheet 1")
+        self.wk_book_campus = ArquivoExcel.ArquivoExcel(file_campus)
+        self.tab_campus = self.wk_book_campus.select_tab("Sheet 1")
 
         #Criar colunas extras
         names_header = ["concat","university_id","campus_id","concat2","ids_concatenados","concat_cursos"]
         for i in range(2,8):
-            wk_book_msp.create_column(tab_polo_portfolio,i)
-            wk_book_msp.name_header(tab_polo_portfolio,names_header[i - 2])
+            self.wk_book_msp.create_column(self.tab_polo_portfolio,i)
+            self.wk_book_msp.name_header(self.tab_polo_portfolio,names_header[i - 2])
         
-        wk_book_msp.create_column(tab_msp,7)
-        wk_book_msp.name_header(tab_msp,7,"cursos")
+        self.wk_book_msp.create_column(self.tab_msp,7)
+        self.wk_book_msp.name_header(self.tab_msp,7,"cursos")
 
-        wk_book_campus.create_column(tab_campus,6)
-        wk_book_campus.create_column(tab_campus,7)
-        wk_book_campus.name_header(tab_campus,6,"concat")
-        wk_book_campus.name_header(tab_campus,7,"concat2")
+        self.wk_book_campus.create_column(self.tab_campus,6)
+        self.wk_book_campus.create_column(self.tab_campus,7)
+        self.wk_book_campus.name_header(self.tab_campus,6,"concat")
+        self.wk_book_campus.name_header(self.tab_campus,7,"concat2")
 
+    def check_nursing_course(self):
+        if self.wk_book_msp.check_name_existence("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name_existence("BRAZ CUBAS",2,self.tab_msp):
+            self.wk_book_msp.create_column(self.tab_polo_enfermagem,4)
+            self.wk_book_msp.create_column(self.tab_polo_enfermagem,5)
+            self.wk_book_msp.name_header(self.tab_polo_enfermagem,4,"concat")
+            self.wk_book_msp.name_header(self.tab_polo_enfermagem,5,"campus_id")
+            nursing_row = self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)
+            self.wk_book_msp.xlook_up("F2",f"'[{self.campus_name}]Sheet 1'!$I:$I",f"'[{self.campus_name}]Sheet 1'!$A:$A",self.tab_polo_enfermagem,f"E2:E{nursing_row}")
+            self.wk_book_campus.turn_into_text(self.tab_campus,1,"I")
+            self.wk_book_msp.filter_apply(self.tab_polo_enfermagem,5,"#N/A")
+            if self.wk_book_msp.verify_filtered(f"A2:I{nursing_row}",self.tab_polo_enfermagem):
+                print("ERROR")
+            else:
+                self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
+                self.wk_book_msp.convert_to_value(f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem)
+                self.wk_book_msp.concat_campus_code(self.tab_polo_enfermagem,"E2","F2",f"D2:D{nursing_row}")
+                self.wk_book_msp.text_join(",",f"D2:D{nursing_row}",self.tab_polo_enfermagem,f"D{nursing_row + 1}")
+                self.wk_book_msp.convert_to_value(f"D2:D{nursing_row + 1}",self.tab_polo_enfermagem)
+                for i in range(2,self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
+                    if self.wk_book_msp.check_name("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name("BRAZ CUBAS",2,self.tab_msp):
+                        self.wk_book_msp.copy_and_paste(self.tab_polo_enfermagem,self.tab_msp,f"D{nursing_row + 1}",f"E{i}")
+                    
+        else:
+            if self.wk_book_msp.check_name_existence("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name_existence("CRUZEIRO",2,self.tab_msp):
+                for i in range(self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
+                    if self.wk_book_msp.check_name("TÉCNICO ENFERMAGEM",i,8,self.tab_msp) and self.wk_book_msp.check_name("CRUZEIRO",i,2,self.tab_msp):
+                        self.wk_book_msp.delete_row(self.tab_msp,i,8)   
+
+        
+        
