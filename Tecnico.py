@@ -109,4 +109,15 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             if not self.wk_book_msp.check_name("ENFERMAGEM",cell,8,self.tab_msp):
                 formula = self.wk_book_msp.text_join_msp("'Polo X Portfólio Técnico'",cell)
                 self.wk_book_msp.formula_apply(self.tab_msp,f"E{cell}",formula)
-                
+
+    def verify_if_have_pending(self):
+        msp_row = self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)
+        self.wk_book_msp.filter_apply(self.tab_msp,5,"#CALC!")
+        if self.verify_filtered(f"E2:E{self.wk_book_msp.filter_apply(self.tab_msp,2)}",self.tab_msp):
+            self.wk_book_msp.create_tab("Cursos com Pendência")
+            self.tab_courses_pend = self.wk_book_msp.select_tab("Cursos com Pendência")
+            self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_courses_pend,f"A1:BD{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
+            self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BD{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+            self.wk_book_msp.filter_remove(self.tab_msp,5)
+            
+
