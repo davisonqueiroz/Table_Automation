@@ -90,7 +90,7 @@ class ArquivoExcel:
     def formula_apply(self,spreadsheet_tab,cells,formula):
         spreadsheet_tab.range(cells).formula = formula
 
-    def text_join(self,delimiter,array,spreadsheet_tab,cell):
+    def text_join(self,delimiter,array,spreadsheet_tab):
         formula_apply = f'=TEXTJOIN({delimiter},,{array})'
         self.formula_apply(spreadsheet_tab,array,formula_apply)
 

@@ -91,6 +91,22 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             self.wk_book_msp.filter_remove(self.tab_polo_portfolio,4) 
             self.wk_book_msp.sort_table(self.tab_polo_portfolio,f"A1:Q{last_row}","H1")
             
+    
+    def treatment_names(self):
+        self.wk_book_msp.replace(self.tab_polo_portfolio,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",' ','')
+        self.wk_book_msp.replace(self.tab_polo_portfolio,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",'.','')
+        self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_msp,f'H2:H{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}',f'G2:G{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}')
+        self.wk_book_msp.replace(self.tab_msp,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",' ','')
+        self.wk_book_msp.replace(self.tab_msp,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",'.','')
+        
+    def remove_duplicates_and_apply_textjoin(self):
+        self.wk_book_msp.concat(self.tab_polo_portfolio,'D2','L2',f'G2:G{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}')
+        self.wk_book_msp.remove_duplicates(self.tab_polo_portfolio,f'A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}',7)
+        self.concat_campus_code(self.tab_polo_portfolio,'D2','I2',f'F2:F{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}')
+        self.convert_to_value(f'F2:F{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}',self.tab_polo_portfolio)
 
-        
-        
+        for cell in range (2,self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
+            if not self.wk_book_msp.check_name("ENFERMAGEM",cell,8,self.tab_msp):
+                formula = self.wk_book_msp.text_join_msp("'Polo X Portfólio Técnico'",cell)
+                self.wk_book_msp.formula_apply(self.tab_msp,f"E{cell}",formula)
+                
