@@ -31,14 +31,19 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
         self.wk_book_campus.name_header(self.tab_campus,7,"concat2")
 
     def check_nursing_course(self):
+        self.wk_book_campus.turn_into_text(self.tab_campus,"I",1)
         if self.wk_book_msp.check_name_existence("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name_existence("BRAZ CUBAS",2,self.tab_msp):
             self.wk_book_msp.create_column(self.tab_polo_enfermagem,4)
             self.wk_book_msp.create_column(self.tab_polo_enfermagem,5)
             self.wk_book_msp.name_header(self.tab_polo_enfermagem,4,"concat")
             self.wk_book_msp.name_header(self.tab_polo_enfermagem,5,"campus_id")
             nursing_row = self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)
-            self.wk_book_msp.xlook_up("F2",f"'[{self.campus_name}]Sheet 1'!$I:$I",f"'[{self.campus_name}]Sheet 1'!$A:$A",self.tab_polo_enfermagem,f"E2:E{nursing_row}")
-            self.wk_book_campus.turn_into_text(self.tab_campus,1,"I")
+            self.wk_book_campus.create_tab("BrazCubas")
+            self.tab_campus_brazcubas = self.wk_book_campus.select_tab("BrazCubas")
+            self.wk_book_campus.filter_apply(self.tab_campus,4,"Brazcubas")
+            self.wk_book_campus.copy_and_paste(self.tab_campus,self.tab_campus_brazcubas,f"A1:AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}","A1")
+            self.wk_book_campus.filter_remove(self.tab_campus,4)
+            self.wk_book_msp.xlook_up("F2",f"'[{self.campus_name}]BrazCubas'!$I:$I",f"'[{self.campus_name}]BrazCubas'!$A:$A",self.tab_polo_enfermagem,f"E2:E{nursing_row}")
             self.wk_book_msp.filter_apply(self.tab_polo_enfermagem,5,"#N/A")
             if self.wk_book_msp.verify_filtered(f"A2:I{nursing_row}",self.tab_polo_enfermagem):
                 self.wk_book_msp.create_tab("Pendências Enfermagem")

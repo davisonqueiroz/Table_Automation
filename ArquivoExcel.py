@@ -186,7 +186,7 @@ class ArquivoExcel:
         return False
 
     def turn_into_text(self,spreadsheet_tab,column_cell,column):
-        conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column)}')
+        conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column_cell)}')
         conversion.api.TextToColumns(Destination = conversion.api,
         DataType = 1,
         Semicolon = False )
