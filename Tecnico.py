@@ -150,6 +150,17 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             message_shoot.couses_pending(self.wk_book_msp.extract_last_filled_row(self.tab_courses_pend,2) - 1)
         if self.nursing_pending == True:
             message_shoot.nursing_pending(self.wk_book_msp.extract_last_filled_row(self.tab_pend_enf,2) - 1)
+
+    def saving_files(self,save_arc_name):
+        if save_arc_name:
+            self.wk_book_msp.save_file(save_arc_name)
+            self.wk_book_msp.close_file()
+            self.wk_book_campus.close_file_without_saving()
+        else:
+            self.wk_book_msp.close_file_without_saving()
+            self.wk_book_campus.close_file_without_saving()
+
+
         
         
 
