@@ -7,7 +7,7 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
 
     def spreadsheet_processing(self,file_msp,file_campus):
 
-        self.campus_name = os.path.basename(file_msp)
+        self.campus_name = os.path.basename(file_campus)
 
         self.wk_book_msp = ArquivoExcel.ArquivoExcel(file_msp)
         self.tab_msp = self.wk_book_msp.select_tab("Modelo Sem Parar")
@@ -21,7 +21,7 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
         names_header = ["concat","university_id","campus_id","concat2","ids_concatenados","concat_cursos"]
         for i in range(2,8):
             self.wk_book_msp.create_column(self.tab_polo_portfolio,i)
-            self.wk_book_msp.name_header(self.tab_polo_portfolio,names_header[i - 2])
+            self.wk_book_msp.name_header(self.tab_polo_portfolio,i,names_header[i - 2])
         
         self.wk_book_msp.create_column(self.tab_msp,7)
         self.wk_book_msp.name_header(self.tab_msp,7,"cursos")
@@ -54,16 +54,20 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
                 self.wk_book_msp.copy_and_paste(self.tab_polo_enfermagem,self.tab_pend_enf,f"A1:I{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}","A1")
                 self.wk_book_msp.delete_filtered_rows(self.tab_polo_enfermagem,f"A2:I{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}")
                 self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
+                self.wk_book_msp.filter_apply(self.tab_polo_enfermagem,5,"#N/A")
+                self.wk_book_msp.delete_filtered_rows(self.tab_polo_enfermagem,f"A2:I{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}")
+                self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
                 self.wk_book_msp.convert_to_value(f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem)
-                self.wk_book_msp.concat_campus_code(self.tab_polo_enfermagem,"E2","F2",f"D2:D{nursing_row}")
-                self.wk_book_msp.convert_to_value(f"D2:D{nursing_row + 1}",self.tab_polo_enfermagem)
-                self.wk_book_msp.text_join(",",f"D2:D{nursing_row}",self.tab_polo_enfermagem,f"D{nursing_row + 1}")
+                self.wk_book_msp.concat_campus_code(self.tab_polo_enfermagem,"E2","F2",f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}")
+                self.wk_book_msp.convert_to_value(f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem)
+                self.wk_book_msp.text_join(",",f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem,f"D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1) + 1}")
+                self.wk_book_msp.fill_with_value(self.tab_polo_enfermagem,f'D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,4)}',self.tab_polo_enfermagem.range(f'D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,4)}').value)
             else:
                 self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
                 self.wk_book_msp.convert_to_value(f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem)
                 self.wk_book_msp.concat_campus_code(self.tab_polo_enfermagem,"E2","F2",f"D2:D{nursing_row}")
                 self.wk_book_msp.convert_to_value(f"D2:D{nursing_row + 1}",self.tab_polo_enfermagem)
-                self.wk_book_msp.text_join(",",f"D2:D{nursing_row}",self.tab_polo_enfermagem,f"D{nursing_row + 1}")
+                self.wk_book_msp.text_join(",",f"D2:D{nursing_row}",self.tab_polo_enfermagem,f"D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1) + 1}")
                 self.quantity_nursing = 0
                 for i in range(2,self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
                     if self.wk_book_msp.check_name("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name("BRAZ CUBAS",2,self.tab_msp):

@@ -56,7 +56,7 @@ class ArquivoExcel:
 
     def delete_filtered_rows(self,spreadsheet_tab,selection_range):
         delete_cells = spreadsheet_tab.range(selection_range)
-        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells = self.select_filtered(spreadsheet_tab,selection_range)
         for cell in delete_cells:
             cell.EntireRow.Delete()
 
@@ -90,9 +90,9 @@ class ArquivoExcel:
     def formula_apply(self,spreadsheet_tab,cells,formula):
         spreadsheet_tab.range(cells).formula = formula
 
-    def text_join(self,delimiter,array,spreadsheet_tab):
+    def text_join(self,delimiter,array,spreadsheet_tab,cells):
         formula_apply = f'=TEXTJOIN({delimiter},,{array})'
-        self.formula_apply(spreadsheet_tab,array,formula_apply)
+        self.formula_apply(spreadsheet_tab,cells,formula_apply)
 
     def text_join_msp(self,tab_name,cell):
         formula_apply = f'=TEXTJOIN(",",TRUE,UNIQUE(FILTER({tab_name}!F:F,({tab_name}!C:C=C{cell})*({tab_name}!L:L=G{cell}))))'
@@ -185,7 +185,7 @@ class ArquivoExcel:
                 return True
         return False
 
-    def turn_into_text(self,spreadsheet_tab,column_cell,column):
+    def turn_into_text(self,spreadsheet_tab,column,column_cell):
         conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column_cell)}')
         conversion.api.TextToColumns(Destination = conversion.api,
         DataType = 1,
