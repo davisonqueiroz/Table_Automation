@@ -34,6 +34,9 @@ class ArquivoExcel:
 
     def create_tab(self,tab_name):
         self.book.sheets.add(tab_name)
+
+    def select_tab(self,tab_name):
+        return self.book.sheets[f'{tab_name}']
     
         #manipulação de linhas
 
@@ -56,7 +59,10 @@ class ArquivoExcel:
         delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
         for cell in delete_cells:
             cell.EntireRow.Delete()
-        
+
+    def delete_row(self,spreadsheet_tab,row,column):
+        spreadsheet_tab.cells(row,column).api.EntireRow.Delete()
+
     def delete_rows_from_condition(self,complete_list,spreadsheet_tab,column_sheet):
         for cell in range(self.extract_last_filled_row(spreadsheet_tab,column_sheet) + 1, 2, -1):
             for value in complete_list:
@@ -84,7 +90,7 @@ class ArquivoExcel:
     def formula_apply(self,spreadsheet_tab,cells,formula):
         spreadsheet_tab.range(cells).formula = formula
 
-    def text_join(self,delimiter,array,spreadsheet_tab,cell):
+    def text_join(self,delimiter,array,spreadsheet_tab):
         formula_apply = f'=TEXTJOIN({delimiter},,{array})'
         self.formula_apply(spreadsheet_tab,array,formula_apply)
 
@@ -180,7 +186,7 @@ class ArquivoExcel:
         return False
 
     def turn_into_text(self,spreadsheet_tab,column_cell,column):
-        conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column)}')
+        conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column_cell)}')
         conversion.api.TextToColumns(Destination = conversion.api,
         DataType = 1,
         Semicolon = False )
