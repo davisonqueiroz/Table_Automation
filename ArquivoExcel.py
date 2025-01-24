@@ -138,12 +138,12 @@ class ArquivoExcel:
     
     def clear_only_filtered(self,spreadsheet_tab,selection_range):
         delete_cells = spreadsheet_tab.range(selection_range)
-        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells = self.select_filtered(spreadsheet_tab,selection_range)
         delete_cells.ClearContents()
     
     def delete_only_filtered(self,spreadsheet_tab,selection_range):
         xw.apps.active.api.DisplayAlerts = False
-        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells = self.select_filtered(spreadsheet_tab,selection_range)
         delete_cells.EntireRow.Delete()
 
     def select_filtered(self,spreadsheet_tab,selection_range):

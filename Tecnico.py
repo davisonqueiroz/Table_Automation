@@ -98,16 +98,24 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
     def xlooup_and_treat_errors(self):
         self.wk_book_msp.xlook_up("B2",f"'[{self.campus_name}]Sheet 1'!$F:$F",f"'[{self.campus_name}]Sheet 1'!$A:$A",self.tab_polo_portfolio,f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1)}")    
         self.polo_pending = False
+        self.last_polos = self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)
 
         self.wk_book_msp.filter_apply(self.tab_polo_portfolio,4,"#N/A")
-        last_row = self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)
         if self.wk_book_msp.verify_filtered(f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",self.tab_polo_portfolio):
             self.wk_book_msp.create_tab("Polos com pendência")
             self.tab_pend_polos = self.wk_book_msp.select_tab("Polos com pendência")
             self.wk_book_msp.copy_and_paste(self.tab_polo_portfolio,self.tab_pend_polos,f"A1:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}","A1")
-            self.wk_book_msp.delete_filtered_rows(self.tab_polo_portfolio,f"A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}")
-            self.wk_book_msp.filter_remove(self.tab_polo_portfolio,4) 
-            self.wk_book_msp.sort_table(self.tab_polo_portfolio,f"A1:Q{last_row}","H1")
+            self.wk_book_msp.clear_only_filtered(self.tab_polo_portfolio,f"A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}")
+            self.wk_book_msp.filter_remove(self.tab_polo_portfolio,4)
+            self.wk_book_msp.sort_table(self.tab_polo_portfolio,f"A1:Q{self.last_polos}","A1")
+
+            self.wk_book_msp.xlook_up("E2",f"'[{self.campus_name}]Sheet 1'!$G:$G",f"'[{self.campus_name}]Sheet 1'!$A:$A",self.tab_pend_polos,f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_pend_polos,1)}")    
+            self.wk_book_msp.filter_remove(self.tab_pend_polos,4)
+            self.wk_book_msp.filter_apply(self.tab_pend_polos,4,"<>#N/A")
+            if self.wk_book_msp.verify_filtered(f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_pend_polos,2)}",self.tab_pend_polos):
+                self.wk_book_msp.copy_and_paste(self.tab_pend_polos,self.tab_polo_portfolio,f"A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",f"A{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,1) + 1}")
+                self.wk_book_msp.delete_only_filtered(self.tab_pend_polos,f"A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_pend_polos,2)}")
+                self.wk_book_msp.filter_remove(self.tab_pend_polos,4)
             self.polo_pending == True
             
     
