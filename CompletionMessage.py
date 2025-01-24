@@ -17,4 +17,4 @@ class MessagesTecnico:
         messagebox.showinfo(title="Pendência de Polos Enfermagem",message=f"Foram encontrados {amount_pending} polos de enfermagem com pendência, os quais foram separados na aba 'Pendências Enfermagem'")
 
     def polo_pending(self,amount_pending):
-        messagebox.showinfo(title="Polos com Pendência",message=f"Foram encontrados{amount_pending} polos com pendência, os quais foram separados na aba ' Polos com Pendência'")
+        messagebox.showinfo(title="Polos com Pendência",message=f"Foram encontrados {amount_pending} polos com pendência, os quais foram separados na aba ' Polos com Pendência'")

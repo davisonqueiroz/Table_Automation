@@ -32,6 +32,7 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
         self.wk_book_campus.name_header(self.tab_campus,7,"concat2")
 
     def check_nursing_course(self):
+        self.quantity_nursing = 0
         self.wk_book_campus.turn_into_text(self.tab_campus,"I",1)
         if self.wk_book_msp.check_name_existence("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name_existence("BRAZ CUBAS",2,self.tab_msp):
             self.wk_book_msp.create_column(self.tab_polo_enfermagem,4)
@@ -44,10 +45,10 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             self.wk_book_campus.filter_apply(self.tab_campus,4,"Brazcubas")
             self.wk_book_campus.copy_and_paste(self.tab_campus,self.tab_campus_brazcubas,f"A1:AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}","A1")
             self.wk_book_campus.filter_remove(self.tab_campus,4)
-            self.wk_book_msp.xlook_up("F2",f"'[{self.campus_name}]BrazCubas'!$I:$I",f"'[{self.campus_name}]BrazCubas'!$A:$A",self.tab_polo_enfermagem,f"E2:E{nursing_row}")
+            self.wk_book_msp.xlook_up("F2",f"'[{self.campus_name}]BrazCubas'!$I:$I",f"'[{self.campus_name}]BrazCubas'!$A:$A",self.tab_polo_enfermagem,f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}")
             self.wk_book_msp.filter_apply(self.tab_polo_enfermagem,5,"#N/A")
             self.nursing_pending =  False
-            if self.wk_book_msp.verify_filtered(f"A2:I{nursing_row}",self.tab_polo_enfermagem):
+            if self.wk_book_msp.verify_filtered(f"A2:I{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}",self.tab_polo_enfermagem):
                 self.nursing_pending = True
                 self.wk_book_msp.create_tab("Pendências Enfermagem")
                 self.tab_pend_enf = self.wk_book_msp.select_tab("Pendências Enfermagem")
@@ -65,18 +66,17 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             else:
                 self.wk_book_msp.filter_remove(self.tab_polo_enfermagem,5)
                 self.wk_book_msp.convert_to_value(f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,2)}",self.tab_polo_enfermagem)
-                self.wk_book_msp.concat_campus_code(self.tab_polo_enfermagem,"E2","F2",f"D2:D{nursing_row}")
-                self.wk_book_msp.convert_to_value(f"D2:D{nursing_row + 1}",self.tab_polo_enfermagem)
-                self.wk_book_msp.text_join(",",f"D2:D{nursing_row}",self.tab_polo_enfermagem,f"D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1) + 1}")
-                self.quantity_nursing = 0
-                for i in range(2,self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
-                    if self.wk_book_msp.check_name("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name("BRAZ CUBAS",2,self.tab_msp):
-                        self.wk_book_msp.copy_and_paste(self.tab_polo_enfermagem,self.tab_msp,f"D{nursing_row + 1}",f"E{i}")
-                        self.quantity_nursing += 1
+                self.wk_book_msp.concat_campus_code(self.tab_polo_enfermagem,"E2","F2",f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}")
+                self.wk_book_msp.convert_to_value(f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,4)}",self.tab_polo_enfermagem)
+                self.wk_book_msp.text_join(",",f"D2:D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1)}",self.tab_polo_enfermagem,f"D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,1) + 1}")
+            for i in range(2,self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
+                if self.wk_book_msp.check_name("ENFERMAGEM",8,self.tab_msp,i) and self.wk_book_msp.check_name("BRAZ CUBAS",2,self.tab_msp,i):
+                    self.wk_book_msp.copy_and_paste(self.tab_polo_enfermagem,self.tab_msp,f"D{self.wk_book_msp.extract_last_filled_row(self.tab_polo_enfermagem,4)}",f"E{i}")
+                    self.quantity_nursing += 1
         else:
             if self.wk_book_msp.check_name_existence("ENFERMAGEM",8,self.tab_msp) and self.wk_book_msp.check_name_existence("CRUZEIRO",2,self.tab_msp):
                 for i in range(self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
-                    if self.wk_book_msp.check_name("TÉCNICO ENFERMAGEM",i,8,self.tab_msp) and self.wk_book_msp.check_name("CRUZEIRO",i,2,self.tab_msp):
+                    if self.wk_book_msp.check_name_existence("TÉCNICO ENFERMAGEM",i,8,self.tab_msp) and self.wk_book_msp.check_name_existence("CRUZEIRO",i,2,self.tab_msp):
                         self.wk_book_msp.delete_row(self.tab_msp,i,8)   
         
     def filter_order_and_fill(self):
@@ -123,17 +123,16 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
         self.wk_book_msp.replace(self.tab_polo_portfolio,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",' ','')
         self.wk_book_msp.replace(self.tab_polo_portfolio,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}",'.','')
         self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_msp,f'H2:H{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}',f'G2:G{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}')
-        self.wk_book_msp.replace(self.tab_msp,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",' ','')
-        self.wk_book_msp.replace(self.tab_msp,f"L2:L{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",'.','')
+        self.wk_book_msp.replace(self.tab_msp,f"G2:G{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",' ','')
+        self.wk_book_msp.replace(self.tab_msp,f"G2:G{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",'.','')
         
     def remove_duplicates_and_apply_textjoin(self):
         self.wk_book_msp.concat(self.tab_polo_portfolio,'D2','L2',f'G2:G{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}')
         self.wk_book_msp.remove_duplicates(self.tab_polo_portfolio,f'A2:Q{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}',7)
         self.concat_campus_code(self.tab_polo_portfolio,'D2','I2',f'F2:F{self.wk_book_msp.extract_last_filled_row(self.tab_polo_portfolio,2)}')
         self.convert_to_value(f'F2:F{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}',self.tab_polo_portfolio)
-
         for cell in range (2,self.wk_book_msp.extract_last_filled_row(self.tab_msp,2) + 1):
-            if not self.wk_book_msp.check_name("ENFERMAGEM",cell,8,self.tab_msp):
+            if not self.wk_book_msp.check_name("ENFERMAGEM",8,self.tab_msp,cell):
                 formula = self.wk_book_msp.text_join_msp("'Polo X Portfólio Técnico'",cell)
                 self.wk_book_msp.formula_apply(self.tab_msp,f"E{cell}",formula)
 
@@ -141,7 +140,7 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
         self.msp_row = self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)
         self.wk_book_msp.filter_apply(self.tab_msp,5,"#CALC!")
         self.courses_pending = False
-        if self.verify_filtered(f"E2:E{self.wk_book_msp.filter_apply(self.tab_msp,2)}",self.tab_msp):
+        if self.verify_filtered(f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_msp):
             self.wk_book_msp.create_tab("Cursos com Pendência")
             self.tab_courses_pend = self.wk_book_msp.select_tab("Cursos com Pendência")
             self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_courses_pend,f"A1:BD{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
@@ -149,7 +148,7 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             self.wk_book_msp.filter_remove(self.tab_msp,5)
             self.all_courses_pending = False
             self.courses_pending = True
-            if self.wk_book_msp.extract_last_filled_row(self.tab_courses_pend,2) == self.msp_row - self.quantity_nursing:
+            if self.wk_book_msp.extract_last_filled_row(self.tab_courses_pend,2) == (self.msp_row - self.quantity_nursing):
                 self.all_courses_pending = True
             
     def finalize_operation_message(self,window):
