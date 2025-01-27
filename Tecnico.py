@@ -150,6 +150,7 @@ class CursoTecnico(ArquivoExcel.ArquivoExcel):
             self.courses_pending = True
             if self.wk_book_msp.extract_last_filled_row(self.tab_courses_pend,2) == (self.msp_row - self.quantity_nursing):
                 self.all_courses_pending = True
+        self.move_sheet_position(self.tab_msp)
             
     def finalize_operation_message(self,window):
         message_shoot = CompletionMessage.MessagesTecnico(window)

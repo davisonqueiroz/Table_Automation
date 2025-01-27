@@ -37,6 +37,9 @@ class ArquivoExcel:
     def select_tab(self,tab_name):
         return self.book.sheets[f'{tab_name}']
     
+    def move_sheet_position(self,sheet_move):
+        sheet_move.api.Move(Before = self.book.sheets[0].api)
+    
         #manipulação de linhas
 
     def extract_last_filled_row(self,spreadsheet_tab,column_sheet):
