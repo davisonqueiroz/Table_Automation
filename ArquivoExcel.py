@@ -29,8 +29,6 @@ class ArquivoExcel:
         self.book.save(file_path)
     
     def close_file_without_saving(self):
-        # self.book.saved = True
-        # self.close_file()
         self.book.app.quit()
 
     def create_tab(self,tab_name):
