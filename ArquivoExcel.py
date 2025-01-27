@@ -6,8 +6,8 @@ class ArquivoExcel:
     def __init__(self,file_path = None, visibility = True, filtered = False):
         if file_path:
             self.file_path = file_path
-            self.visibilidade = visibility
-            self.filtrada = filtered
+            self.visibility = visibility
+            self.filtered = filtered
             self.book = xw.Book(self.file_path)
         else:
             self.book = xw.Book()
@@ -29,14 +29,16 @@ class ArquivoExcel:
         self.book.save(file_path)
     
     def close_file_without_saving(self):
-        self.book.saved = True
-        self.close_file()
+        self.book.app.quit()
 
     def create_tab(self,tab_name):
         self.book.sheets.add(tab_name)
 
     def select_tab(self,tab_name):
         return self.book.sheets[f'{tab_name}']
+    
+    def move_sheet_position(self,sheet_move):
+        sheet_move.api.Move(Before = self.book.sheets[0].api)
     
         #manipulação de linhas
 
@@ -56,7 +58,7 @@ class ArquivoExcel:
 
     def delete_filtered_rows(self,spreadsheet_tab,selection_range):
         delete_cells = spreadsheet_tab.range(selection_range)
-        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells = self.select_filtered(spreadsheet_tab,selection_range)
         for cell in delete_cells:
             cell.EntireRow.Delete()
 
@@ -90,9 +92,9 @@ class ArquivoExcel:
     def formula_apply(self,spreadsheet_tab,cells,formula):
         spreadsheet_tab.range(cells).formula = formula
 
-    def text_join(self,delimiter,array,spreadsheet_tab):
+    def text_join(self,delimiter,array,spreadsheet_tab,cells):
         formula_apply = f'=TEXTJOIN({delimiter},,{array})'
-        self.formula_apply(spreadsheet_tab,array,formula_apply)
+        self.formula_apply(spreadsheet_tab,cells,formula_apply)
 
     def text_join_msp(self,tab_name,cell):
         formula_apply = f'=TEXTJOIN(",",TRUE,UNIQUE(FILTER({tab_name}!F:F,({tab_name}!C:C=C{cell})*({tab_name}!L:L=G{cell}))))'
@@ -138,12 +140,12 @@ class ArquivoExcel:
     
     def clear_only_filtered(self,spreadsheet_tab,selection_range):
         delete_cells = spreadsheet_tab.range(selection_range)
-        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells = self.select_filtered(spreadsheet_tab,selection_range)
         delete_cells.ClearContents()
     
     def delete_only_filtered(self,spreadsheet_tab,selection_range):
         xw.apps.active.api.DisplayAlerts = False
-        delete_cells = self.select_filtereds(spreadsheet_tab,selection_range)
+        delete_cells = self.select_filtered(spreadsheet_tab,selection_range)
         delete_cells.EntireRow.Delete()
 
     def select_filtered(self,spreadsheet_tab,selection_range):
@@ -185,7 +187,7 @@ class ArquivoExcel:
                 return True
         return False
 
-    def turn_into_text(self,spreadsheet_tab,column_cell,column):
+    def turn_into_text(self,spreadsheet_tab,column,column_cell):
         conversion = spreadsheet_tab.range(f'{column}2:{column}{self.extract_last_filled_row(spreadsheet_tab,column_cell)}')
         conversion.api.TextToColumns(Destination = conversion.api,
         DataType = 1,
