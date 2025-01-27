@@ -6,8 +6,8 @@ class ArquivoExcel:
     def __init__(self,file_path = None, visibility = True, filtered = False):
         if file_path:
             self.file_path = file_path
-            self.visibilidade = visibility
-            self.filtrada = filtered
+            self.visibility = visibility
+            self.filtered = filtered
             self.book = xw.Book(self.file_path)
         else:
             self.book = xw.Book()
@@ -29,8 +29,9 @@ class ArquivoExcel:
         self.book.save(file_path)
     
     def close_file_without_saving(self):
-        self.book.saved = True
-        self.close_file()
+        # self.book.saved = True
+        # self.close_file()
+        self.book.app.quit()
 
     def create_tab(self,tab_name):
         self.book.sheets.add(tab_name)

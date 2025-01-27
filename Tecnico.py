@@ -3,7 +3,7 @@ import os
 import CompletionMessage
 class CursoTecnico(ArquivoExcel.ArquivoExcel):
     def __init__(self,file_path = None, visibility = True, filtered = False):
-        super().__init__()
+        super().__init__(file_path=file_path, visibility=visibility, filtered=filtered)
 
     def spreadsheet_processing(self,file_msp,file_campus):
 

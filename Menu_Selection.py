@@ -41,7 +41,7 @@ class MenuSelection:
             self.root.deiconify()
             return
         
-        arquive_tec = Tecnico.CursoTecnico()
+        arquive_tec = Tecnico.CursoTecnico(file_path=bookMsp)
         arquive_tec.spreadsheet_processing(bookMsp,bookCampus)
         arquive_tec.check_nursing_course()
         arquive_tec.filter_order_and_fill()
@@ -51,6 +51,6 @@ class MenuSelection:
         arquive_tec.remove_duplicates_and_apply_textjoin()
         arquive_tec.verify_if_have_pending()
         arquive_tec.finalize_operation_message(self.root)
-        msp_save = salvarMsp = filedialog.asksaveasfilename(defaultextension=".xlsx",filetypes=[("Arquivo Excel", "*.xlsx")],initialfile= os.path.basename(bookMsp))
+        msp_save = filedialog.asksaveasfilename(defaultextension=".xlsx",filetypes=[("Arquivo Excel", "*.xlsx")],initialfile= os.path.basename(bookMsp))
         arquive_tec.saving_files(msp_save)
 
