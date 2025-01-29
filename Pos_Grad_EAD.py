@@ -77,3 +77,11 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         else:
             self.wk_book_relation.concat_campus_code_unique_cell(self.tab_relat_pos,"C2","A2","D2")
 
+    def remove_campus_from_exp(self):
+        relation_list = self.tab_relat_uni.range(f"A2:A{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,1)}")
+        self.wk_book_campus.delete_rows_from_condition(relation_list,self.tab_posi_unip,self.wk_book_campus.extract_last_filled_row(self.tab_posi_unip,1))
+
+        relation_list = self.tab_relat_pos.range(f"A2:A{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,1)}")
+        self.wk_book_campus.delete_rows_from_condition(relation_list,self.tab_posi_unip,self.wk_book_campus.extract_last_filled_row(self.tab_posi_unip,1))
+        self.wk_book_campus.copy_and_paste(self.tab_posi_unip,self.tab_campus,f"A1:Y{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",f"A{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 1}")
+        self.wk_book_campus.delete_tab("Positivo e Unipê")

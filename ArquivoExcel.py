@@ -37,6 +37,10 @@ class ArquivoExcel:
     def select_tab(self,tab_name):
         return self.book.sheets[f'{tab_name}']
     
+    def delete_tab(self,tab_name):
+        tab_to_delete = self.book.sheets[tab_name]
+        tab_to_delete.delete()
+    
     def move_sheet_position(self,sheet_move):
         sheet_move.api.Move(Before = self.book.sheets[0].api)
     
@@ -65,8 +69,8 @@ class ArquivoExcel:
     def delete_row(self,spreadsheet_tab,row,column):
         spreadsheet_tab.cells(row,column).api.EntireRow.Delete()
 
-    def delete_rows_from_condition(self,complete_list,spreadsheet_tab,column_sheet):
-        for cell in range(self.extract_last_filled_row(spreadsheet_tab,column_sheet) + 1, 2, -1):
+    def delete_rows_from_condition(self,complete_list,spreadsheet_tab,last_cell):
+        for cell in range(last_cell + 1, 0, -1):
             for value in complete_list:
                 cell_value = value.value
                 if cell_value == spreadsheet_tab.range(f"G{cell}").value:
