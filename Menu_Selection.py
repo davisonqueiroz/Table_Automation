@@ -74,3 +74,5 @@ class MenuSelection:
         arquive_pos_grad = Pos_Grad_EAD.PosGraduacaoEAD(file_path=bookMsp)
         arquive_pos_grad.spreadsheet_processing(bookMsp,bookExp,bookRelPolos)
         arquive_pos_grad.check_and_treat_metadata()
+        arquive_pos_grad.separate_campus_and_apply_xlookup()
+        arquive_pos_grad.check_NAs_and_treat()

@@ -105,6 +105,10 @@ class ArquivoExcel:
         self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
         self.convert_to_value(apply_range,spreadsheet_tab)
 
+    def concat_campus_code_unique_cell(self,spreadsheet_tab,first_cell,second_cell,apply_range):
+        formula_apply = f'=CONCAT({first_cell},";campus_code:",{second_cell})'
+        self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
+        self.fill_with_value(spreadsheet_tab,apply_range,spreadsheet_tab.range(apply_range).value)
 
     def concat(self,spreadsheet_tab,first_cell,second_cell,apply_range):
         formula_apply = f'=CONCAT({first_cell},"-",{second_cell})'
@@ -161,6 +165,8 @@ class ArquivoExcel:
                 return False
             else:
                 return False
+
+        
 
      #outros métodos
 
