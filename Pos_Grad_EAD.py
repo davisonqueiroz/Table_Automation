@@ -85,3 +85,21 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_campus.delete_rows_from_condition(relation_list,self.tab_posi_unip,self.wk_book_campus.extract_last_filled_row(self.tab_posi_unip,1))
         self.wk_book_campus.copy_and_paste(self.tab_posi_unip,self.tab_campus,f"A1:Y{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",f"A{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 1}")
         self.wk_book_campus.delete_tab("Positivo e Unipê")
+
+    def separate_rows_and_concatenate(self):
+        row_campus_end = self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 4
+        for row in range(1,6):
+            self.wk_book_campus.create_row(self.tab_campus,row * 1368)
+
+            if row == 1:
+                self.wk_book_campus.concat_campus_code(self.tab_campus,"A2","G2",f"Z2:Z{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}")
+                self.wk_book_campus.text_join(",",f"Z2:Z{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",self.tab_campus,f"AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 1}")
+                self.fill_with_value(self.tab_campus,f"AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",self.tab_campus.range(f"AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}").value)
+            elif row == 5: 
+                self.wk_book_campus.concat_campus_code(self.tab_campus,"A5473","G5473",f"Z5473:Z{row_campus_end}")
+                self.wk_book_campus.text_join(",",f"Z5473:Z{row_campus_end}",self.tab_campus,f"AA{row_campus_end + 1}")
+                self.fill_with_value(self.tab_campus,f"AA{row_campus_end + 1}",self.tab_campus.range(f"AA{row_campus_end + 1}").value)
+            else:
+                self.wk_book_campus.concat_campus_code(self.tab_campus,f"A{((row - 1 )* 1368) + 1}",f"G{((row - 1 )* 1368) + 1}",f"Z{((row - 1 )* 1368) + 1}:Z{(row * 1368) - 1}")
+                self.wk_book_campus.text_join(",",f"Z{((row - 1 )* 1368) + 1}:Z{(1368 * row) - 1}",self.tab_campus,f"AA{1368 * row}")
+                self.fill_with_value(self.tab_campus,f"AA{1368 * row}",self.tab_campus.range(f"AA{1368 * row}").value)

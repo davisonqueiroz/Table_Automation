@@ -77,3 +77,4 @@ class MenuSelection:
         arquive_pos_grad.separate_campus_and_apply_xlookup()
         arquive_pos_grad.check_NAs_and_treat()
         arquive_pos_grad.remove_campus_from_exp()
+        arquive_pos_grad.separate_rows_and_concatenate()
