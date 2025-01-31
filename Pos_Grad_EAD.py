@@ -103,3 +103,15 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
                 self.wk_book_campus.concat_campus_code(self.tab_campus,f"A{((row - 1 )* 1368) + 1}",f"G{((row - 1 )* 1368) + 1}",f"Z{((row - 1 )* 1368) + 1}:Z{(row * 1368) - 1}")
                 self.wk_book_campus.text_join(",",f"Z{((row - 1 )* 1368) + 1}:Z{(1368 * row) - 1}",self.tab_campus,f"AA{1368 * row}")
                 self.fill_with_value(self.tab_campus,f"AA{1368 * row}",self.tab_campus.range(f"AA{1368 * row}").value)
+
+    def separate_universities(self):
+        self.wk_book_msp.create_tab("UNIPE E POSITIVO")
+        self.tab_uni_msp = self.wk_book_msp.select_tab("UNIPE E POSITIVO")
+        self.wk_book_msp.filter_apply(self.tab_msp,2,"UNIPÊ - PÓS-GRADUAÇÃO EAD")
+        self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
+        self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+        self.filter_remove(self.tab_msp,2)
+        self.wk_book_msp.filter_apply(self.tab_msp,2,"POSITIVO - PÓS-GRADUAÇÃO EAD")
+        self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
+        self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+        self.filter_remove(self.tab_msp,2)
