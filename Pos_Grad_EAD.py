@@ -112,6 +112,17 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
         self.filter_remove(self.tab_msp,2)
         self.wk_book_msp.filter_apply(self.tab_msp,2,"POSITIVO - PÓS-GRADUAÇÃO EAD")
-        self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",f"A{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2) + 1}")
+        self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",f"A{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2) + 1}")
         self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
-        self.filter_remove(self.tab_msp,2)
+        self.filter_apply(self.tab_msp,2,"CRUZEIRO DO SUL - PÓS EAD")
+
+    def create_copy_and_separate(self,book_path):
+        new_path_name = "POSITIVO_UNIPÊ.xlsx"
+        directory = os.path.dirname(book_path)
+        self.wk_book_unipe_positivo = ArquivoExcel.ArquivoExcel()
+        self.wk_book_unipe_positivo.create_new_file(directory,new_path_name)
+        self.wk_book_unipe_positivo.rename_tab("Sheet1","UNIPE E POSITIVO")
+        self.tab_unipe = self.wk_book_unipe_positivo.select_tab("UNIPE E POSITIVO")
+        self.wk_book_unipe_positivo.copy_and_paste(self.tab_uni_msp,self.tab_unipe,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
+
+    

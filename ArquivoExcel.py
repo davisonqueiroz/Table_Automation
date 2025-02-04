@@ -44,6 +44,10 @@ class ArquivoExcel:
     def move_sheet_position(self,sheet_move):
         sheet_move.api.Move(Before = self.book.sheets[0].api)
     
+    def rename_tab(self,current_name,new_name):
+        tab = self.select_tab(current_name)
+        tab.name = new_name
+    
         #manipulação de linhas
 
     def extract_last_filled_row(self,spreadsheet_tab,column_sheet):

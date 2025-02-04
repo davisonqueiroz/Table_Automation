@@ -79,3 +79,4 @@ class MenuSelection:
         arquive_pos_grad.remove_campus_from_exp()
         arquive_pos_grad.separate_rows_and_concatenate()
         arquive_pos_grad.separate_universities()
+        arquive_pos_grad.create_copy_and_separate(bookMsp)
