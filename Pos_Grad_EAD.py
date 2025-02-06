@@ -121,6 +121,7 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
     def create_copy_and_separate(self,book_path):
         new_path_name = "POSITIVO_UNIPÊ.xlsx"
         directory = os.path.dirname(book_path)
+        self.path_save = os.path.join(directory,new_path_name)
         self.wk_book_unipe_positivo = ArquivoExcel.ArquivoExcel()
         self.wk_book_unipe_positivo.create_new_file(directory,new_path_name)
         self.wk_book_unipe_positivo.rename_tab("Sheet1","UNIPE E POSITIVO")
@@ -136,3 +137,15 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
             else:    
                 self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{1368 * i}")
         self.wk_book_msp.copy_and_paste(self.tab_campus,self.tab_msp,"AA1368",f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+    
+    def save_and_close_rest(self,file_msp,file_exp,file_relat):
+        self.wk_book_relation.save_file(file_relat)
+        self.wk_book_relation.close_file()
+        self.wk_book_msp.save_file(file_msp)
+        self.wk_book_msp.close_file()
+        self.wk_book_campus.save_file(file_exp)
+        self.wk_book_campus.close_file()
+        self.wk_book_unipe_positivo.save_file(self.path_save)
+        self.wk_book_unipe_positivo.close_file_without_saving()
+
+        
