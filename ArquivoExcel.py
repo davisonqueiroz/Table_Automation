@@ -37,9 +37,29 @@ class ArquivoExcel:
     def select_tab(self,tab_name):
         return self.book.sheets[f'{tab_name}']
     
+    def delete_tab(self,tab_name):
+        tab_to_delete = self.book.sheets[tab_name]
+        tab_to_delete.delete()
+    
     def move_sheet_position(self,sheet_move):
         sheet_move.api.Move(Before = self.book.sheets[0].api)
     
+    def rename_tab(self,current_name,new_name):
+        tab = self.select_tab(current_name)
+        tab.name = new_name
+
+    def create_file_and_paste_content(self,path_name,book_path,spreadsheet_copy,range_copy,second_copy_spreadsheet,second_copy_range):
+        directory = os.path.dirname(book_path)
+        self.wk_book_temporary = ArquivoExcel()
+        self.wk_book_temporary.create_new_file(directory,path_name)
+        path_save = os.path.join(directory,path_name)
+        path_name = path_name.replace(".xlsx","")
+        self.wk_book_temporary.rename_tab("Sheet1",f"{path_name}")
+        self.tab_temporary =  self.wk_book_temporary.select_tab(f"{path_name}")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,range_copy,"A1")
+        self.wk_book_temporary.copy_and_paste(second_copy_spreadsheet,self.tab_temporary,second_copy_range,f"E2:E{self.wk_book_temporary.extract_last_filled_row(self.tab_temporary,2)}")
+        self.wk_book_temporary.save_file(path_save)
+        self.wk_book_temporary.close_file()
         #manipulação de linhas
 
     def extract_last_filled_row(self,spreadsheet_tab,column_sheet):
@@ -65,8 +85,8 @@ class ArquivoExcel:
     def delete_row(self,spreadsheet_tab,row,column):
         spreadsheet_tab.cells(row,column).api.EntireRow.Delete()
 
-    def delete_rows_from_condition(self,complete_list,spreadsheet_tab,column_sheet):
-        for cell in range(self.extract_last_filled_row(spreadsheet_tab,column_sheet) + 1, 2, -1):
+    def delete_rows_from_condition(self,complete_list,spreadsheet_tab,last_cell):
+        for cell in range(last_cell + 1, 0, -1):
             for value in complete_list:
                 cell_value = value.value
                 if cell_value == spreadsheet_tab.range(f"G{cell}").value:
@@ -105,6 +125,10 @@ class ArquivoExcel:
         self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
         self.convert_to_value(apply_range,spreadsheet_tab)
 
+    def concat_campus_code_unique_cell(self,spreadsheet_tab,first_cell,second_cell,apply_range):
+        formula_apply = f'=CONCAT({first_cell},";campus_code:",{second_cell})'
+        self.formula_apply(spreadsheet_tab,apply_range,formula_apply)
+        self.fill_with_value(spreadsheet_tab,apply_range,spreadsheet_tab.range(apply_range).value)
 
     def concat(self,spreadsheet_tab,first_cell,second_cell,apply_range):
         formula_apply = f'=CONCAT({first_cell},"-",{second_cell})'
@@ -161,6 +185,8 @@ class ArquivoExcel:
                 return False
             else:
                 return False
+
+        
 
      #outros métodos
 
