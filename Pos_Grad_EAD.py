@@ -21,11 +21,13 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
     
     def check_and_treat_metadata(self):
         self.wk_book_campus.filter_apply(self.tab_campus,7,"=")
+        self.polo_pending = False
         if self.wk_book_campus.verify_filtered(f"G2:G{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",self.tab_campus):
             self.wk_book_campus.create_tab("Polos com Pendência")
             self.tab_pending = self.wk_book_campus.select_tab("Polos com Pendência")
             self.wk_book_campus.copy_and_paste(self.tab_campus,self.tab_pending,f"A1:Y{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}","A1")
             self.wk_book_campus.delete_filtered_rows(self.tab_campus,f"A2:Y{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}")
+            self.polo_pending = True
         self.wk_book_campus.filter_remove(self.tab_campus,7)
         self.wk_book_campus.turn_into_text(self.tab_campus,"G",1)
     
@@ -52,12 +54,14 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
 
     def check_NAs_and_treat(self):
         self.wk_book_relation.filter_apply(self.tab_relat_uni,3,"#N/A")
+        self.campus_relat_pending = False
         if self.wk_book_relation.verify_filtered(f"C2:C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,1)}",self.tab_relat_uni):
             self.wk_book_relation.create_tab("Pendência Campus")
             self.tab_pending_campus = self.wk_book_relation.select_tab("Pendência Campus")
             self.tab_relat_uni.activate()
             self.wk_book_relation.copy_and_paste(self.tab_relat_uni,self.tab_pending_campus,f"A1:C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,1)}","A1")
             self.wk_book_relation.delete_filtered_rows(self.tab_relat_uni,f"A2:C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,1)}")
+            self.campus_relat_pending = True
         self.wk_book_relation.filter_remove(self.tab_relat_uni,3)
         self.wk_book_relation.convert_to_value(f"C2:C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,1)}",self.tab_relat_uni)
         self.wk_book_relation.concat_campus_code(self.tab_relat_uni,"C2","A2",f"D2:D{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,1)}")
@@ -138,6 +142,14 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
                 self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{1368 * i}")
         self.wk_book_msp.copy_and_paste(self.tab_campus,self.tab_msp,"AA1368",f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
     
+    def finalize_operation_message(self,window):
+        message_shoot = CompletionMessage.MessagesPosGradEad(window)
+        if self.polo_pending == True:
+            message_shoot.metadata_pending(self.wk_book_campus.extract_last_filled_row(self.tab_pending,1))
+        if self.campus_relat_pending == True:
+            message_shoot.pending_campus_from_relation(self.wk_book_relation.extract_last_filled_row(self.tab_pending_campus,2))
+        if self.polo_pending == False and self.campus_relat_pending == False:
+            message_shoot.no_pendings()
     def save_and_close_rest(self,file_msp,file_exp,file_relat):
         self.wk_book_relation.save_file(file_relat)
         self.wk_book_relation.close_file()
