@@ -87,18 +87,18 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_campus.delete_tab("Positivo e Unipê")
 
     def separate_rows_and_concatenate(self):
-        row_campus_end = self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 4
+        self.row_campus_end = self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 4
         for row in range(1,6):
             self.wk_book_campus.create_row(self.tab_campus,row * 1368)
 
             if row == 1:
                 self.wk_book_campus.concat_campus_code(self.tab_campus,"A2","G2",f"Z2:Z{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}")
                 self.wk_book_campus.text_join(",",f"Z2:Z{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",self.tab_campus,f"AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1) + 1}")
-                self.fill_with_value(self.tab_campus,f"AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}",self.tab_campus.range(f"AA{self.wk_book_campus.extract_last_filled_row(self.tab_campus,1)}").value)
+                self.fill_with_value(self.tab_campus,"AA1368",self.tab_campus.range("AA1368").value)
             elif row == 5: 
-                self.wk_book_campus.concat_campus_code(self.tab_campus,"A5473","G5473",f"Z5473:Z{row_campus_end}")
-                self.wk_book_campus.text_join(",",f"Z5473:Z{row_campus_end}",self.tab_campus,f"AA{row_campus_end + 1}")
-                self.fill_with_value(self.tab_campus,f"AA{row_campus_end + 1}",self.tab_campus.range(f"AA{row_campus_end + 1}").value)
+                self.wk_book_campus.concat_campus_code(self.tab_campus,"A5473","G5473",f"Z5473:Z{self.row_campus_end}")
+                self.wk_book_campus.text_join(",",f"Z5473:Z{self.row_campus_end}",self.tab_campus,f"AA{self.row_campus_end + 1}")
+                self.fill_with_value(self.tab_campus,f"AA{self.row_campus_end + 1}",self.tab_campus.range(f"AA{self.row_campus_end + 1}").value)
             else:
                 self.wk_book_campus.concat_campus_code(self.tab_campus,f"A{((row - 1 )* 1368) + 1}",f"G{((row - 1 )* 1368) + 1}",f"Z{((row - 1 )* 1368) + 1}:Z{(row * 1368) - 1}")
                 self.wk_book_campus.text_join(",",f"Z{((row - 1 )* 1368) + 1}:Z{(1368 * row) - 1}",self.tab_campus,f"AA{1368 * row}")
@@ -124,5 +124,13 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_unipe_positivo.rename_tab("Sheet1","UNIPE E POSITIVO")
         self.tab_unipe = self.wk_book_unipe_positivo.select_tab("UNIPE E POSITIVO")
         self.wk_book_unipe_positivo.copy_and_paste(self.tab_uni_msp,self.tab_unipe,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
+        self.wk_book_msp.delete_tab("UNIPE E POSITIVO")
 
-    
+    def create_paths_and_fill_columns(self,book_path):
+        for i in range(2,6):
+            if i == 5:
+                self.row_campus_end = self.row_campus_end + 1    
+                self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{self.row_campus_end}")
+            else:    
+                self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{1368 * i}")
+        self.wk_book_msp.copy_and_paste(self.tab_campus,self.tab_msp,"AA1368",f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")

@@ -80,3 +80,4 @@ class MenuSelection:
         arquive_pos_grad.separate_rows_and_concatenate()
         arquive_pos_grad.separate_universities()
         arquive_pos_grad.create_copy_and_separate(bookMsp)
+        arquive_pos_grad.create_paths_and_fill_columns(bookMsp)
