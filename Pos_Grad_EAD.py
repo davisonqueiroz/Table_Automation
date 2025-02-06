@@ -110,10 +110,12 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_msp.filter_apply(self.tab_msp,2,"UNIPÊ - PÓS-GRADUAÇÃO EAD")
         self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}","A1")
         self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+        self.wk_book_msp.copy_and_paste(self.tab_relat_uni,self.tab_uni_msp,f"D{self.wk_book_relation.extract_last_filled_row(self.tab_relat_uni,4)}",f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2)}")
         self.filter_remove(self.tab_msp,2)
         self.wk_book_msp.filter_apply(self.tab_msp,2,"POSITIVO - PÓS-GRADUAÇÃO EAD")
         self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",f"A{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2) + 1}")
         self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+        self.wk_book_msp.copy_and_paste(self.tab_relat_pos,self.tab_uni_msp,f"D{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,4)}",f"E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,5) + 1}:E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2)}")
         self.filter_apply(self.tab_msp,2,"CRUZEIRO DO SUL - PÓS EAD")
 
     def create_copy_and_separate(self,book_path):

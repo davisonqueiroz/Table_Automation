@@ -52,11 +52,14 @@ class ArquivoExcel:
         directory = os.path.dirname(book_path)
         self.wk_book_temporary = ArquivoExcel()
         self.wk_book_temporary.create_new_file(directory,path_name)
+        path_save = os.path.join(directory,path_name)
         path_name = path_name.replace(".xlsx","")
         self.wk_book_temporary.rename_tab("Sheet1",f"{path_name}")
         self.tab_temporary =  self.wk_book_temporary.select_tab(f"{path_name}")
         self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,range_copy,"A1")
         self.wk_book_temporary.copy_and_paste(second_copy_spreadsheet,self.tab_temporary,second_copy_range,f"E2:E{self.wk_book_temporary.extract_last_filled_row(self.tab_temporary,2)}")
+        self.wk_book_temporary.save_file(path_save)
+        self.wk_book_temporary.close_file()
         #manipulação de linhas
 
     def extract_last_filled_row(self,spreadsheet_tab,column_sheet):
