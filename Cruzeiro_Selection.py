@@ -9,7 +9,15 @@ class CruzeiroMenuSelection:
     def __init__(self):
         self.root = Tk()
         self.root.title("Cruzeiro do Sul")
-        self.root.geometry("368x428+600+200")
+        width = 380
+        height = 440
+        #resolução do sistema
+        width_screen = self.root.winfo_screenwidth()
+        height_screen =  self.root.winfo_screenheight()
+        #posicionamento da janela
+        pos_x = int(width_screen/2 - width/2)
+        pos_y = int(height_screen/2 - height/2)
+        self.root.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
 
         #Labels
         Title_label = Label(self.root,text= "Selecione qual modelo deseja padronizar :",font=("Arial", 13))
