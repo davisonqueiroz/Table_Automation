@@ -1,39 +1,49 @@
-from tkinter import filedialog
-from tkinter import *
 import Cruzeiro_Selection
+import customtkinter as ctk
+
 
 class MenuSelection:
     def __init__(self):
-        self.root = Tk()
-        self.root.title("Menu Principal")
-        width = 380
-        height = 440
+        self.window = ctk.CTk()
+        self.window.title("Table Automatization")
+        width = 400
+        height = 470
+        self.window.update_idletasks()
         #resolução do sistema
-        width_screen = self.root.winfo_screenwidth()
-        height_screen =  self.root.winfo_screenheight()
+        width_screen = self.window.winfo_screenwidth()
+        height_screen =  self.window.winfo_screenheight()
         #posicionamento da janela
-        pos_x = int(width_screen/2 - width/2)
-        pos_y = int(height_screen/2 - height/2)
-        self.root.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
+        pos_x = (width_screen - width)//2
+        pos_y = (height_screen - height)//2
+        self.window.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
+        self.window._set_appearance_mode("light")
+        self.window.resizable(False,False)
+        self.window.config(background="#FFFAFA")
 
         #Labels
-        Title_label = Label(self.root,text= "Selecione uma das seguintes opções : ",font=("Arial", 13))
-        Title_label.pack(pady=50)
 
-        #Buttons
-        Btn_Cruzeiro = Button(self.root,text= "Cruzeiro do Sul",width=25,height=2,font=("Arial", 12),command=self.cruzeiro_command)
-        Btn_Cruzeiro.pack(pady= 5.2)
-        
-        Btn_to_divide = Button(self.root,text= "Dividir tabela",width=25,height=2,font=("Arial", 12))
-        Btn_to_divide.pack(pady= 5.2)
+        text_menu =  ctk.CTkLabel(self.window,text= " Bem vindo ao Menu",text_color= "black",font=("Arial Black", 29),bg_color= "#FFFAFA")
+        text_menu.place(x= 38,y= 55)
 
-        Btn_to_divide = Button(self.root,text= "Sair",width=25,height=2,font=("Arial", 12),command= self.quit_command)
-        Btn_to_divide.pack(pady= 5.2)
-        self.root.mainloop()
+        #Botoes
+
+        btn_cruzeiro = ctk.CTkButton(self.window,text=" Cruzeiro do Sul",command=self.cruzeiro_command,height= 70,width=280,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 25))
+        btn_cruzeiro.place(x= 60, y = 160)
+
+        btn_to_divide = ctk.CTkButton(self.window,text=" Dividir tabela",height= 70,width=280,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 25))
+        btn_to_divide.place(x= 60, y = 245)
+
+        btn_exit = ctk.CTkButton(self.window,text=" Sair",height= 50,width=110,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial Black", 18),command=self.quit_command,hover_color="red")
+        btn_exit.place(x= 276, y = 400)
+
+        self.window.mainloop()
 
     def cruzeiro_command(self):
-        self.root.destroy()
+        self.window.destroy()
         Cruzeiro_Selection.CruzeiroMenuSelection()
 
     def quit_command(self):
-        self.root.quit()
+        self.window.quit()

@@ -1,54 +1,64 @@
-from tkinter import filedialog
-from tkinter import *
+from customtkinter import filedialog
 import Tecnico
 import os
 import Pos_Grad_EAD
 import Menu_Selection
+import customtkinter as ctk
 
 class CruzeiroMenuSelection:
     def __init__(self):
-        self.root = Tk()
-        self.root.title("Cruzeiro do Sul")
-        width = 380
-        height = 440
+        self.window = ctk.CTk()
+
+        self.window.title("Cruzeiro do Sul")
+        width = 470
+        height = 520
         #resolução do sistema
-        width_screen = self.root.winfo_screenwidth()
-        height_screen =  self.root.winfo_screenheight()
+        width_screen = self.window.winfo_screenwidth()
+        height_screen =  self.window.winfo_screenheight()
         #posicionamento da janela
         pos_x = int(width_screen/2 - width/2)
         pos_y = int(height_screen/2 - height/2)
-        self.root.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
+        self.window.geometry(f"{width}x{height}+{pos_x}+{pos_y}")
+        self.window._set_appearance_mode("light")
+        self.window.resizable(False,False)
+        self.window.config(background="#FFFAFA")
 
         #Labels
-        Title_label = Label(self.root,text= "Selecione qual modelo deseja padronizar :",font=("Arial", 13))
-        Title_label.pack(pady=50)
+        text_menu_cruzeiro =  ctk.CTkLabel(self.window,text= " Selecione qual modelo padronizar:",text_color= "black",font=("Arial Black", 21),bg_color= "#FFFAFA")
+        text_menu_cruzeiro.place(x= 38,y= 55)
 
-        #Buttons
-        Btn_Tecnico = Button(self.root,text= "Técnico",width=25,height=2,font=("Arial", 12),command=self.tecnico_command)
-        Btn_Tecnico.pack(pady= 5.2)
-        
-        Btn_GradEad = Button(self.root,text= "Pós - Graduação EaD",width=25,height=2,font=("Arial", 12),command=self.pos_grad_EAD_command)
-        Btn_GradEad.pack(pady= 5.2)
+         #Botoes
 
-        Btn_PosEad = Button(self.root,text= "Pós - Graduação Presencial",width=25,height=2,font=("Arial", 12))
-        Btn_PosEad.pack(pady= 5.2)
+        btn_cruzeiro = ctk.CTkButton(self.window,text="Técnico",command=self.tecnico_command,height= 70,width=280,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 25))
+        btn_cruzeiro.place(x= 95, y = 160)
 
-        Btn_Return = Button(self.root,text= "Voltar",width=25,height=2,font=("Arial", 12),command=self.return_command)
-        Btn_Return.pack(pady= 5.2)
+        btn_cruzeiro = ctk.CTkButton(self.window,text="Pós-Graduação EaD",command=self.pos_grad_EAD_command,height= 70,width=280,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 20))
+        btn_cruzeiro.place(x= 95, y = 240)
 
-        self.root.mainloop()
+        btn_cruzeiro = ctk.CTkButton(self.window,text="Pós-Grad Presencial",height= 70,width=280,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 21))
+        btn_cruzeiro.place(x= 95, y = 320)
+
+        btn_cruzeiro = ctk.CTkButton(self.window,text="Voltar",height= 70,width=280,text_color= "white",corner_radius= 80,
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 25),command=self.return_command)
+        btn_cruzeiro.place(x= 95, y = 400)
+
+        self.window.mainloop()
 
     def tecnico_command(self):
-        self.root.withdraw()
-        bookMsp = filedialog.askopenfilename(title="Selecione a tabela Msp",filetypes=(("Arquivo Excel",".xlsx*"),))
-        if not bookMsp:
-            self.root.deiconify()
-            return
-        else:
-            bookCampus = filedialog.askopenfilename(title="Selecione a tabela de Campus",filetypes=(("Arquivo Excel",".xlsx*"),))
-        if not bookCampus:
-            self.root.deiconify()
-            return
+        self.window.withdraw()
+        while True:
+            bookMsp = filedialog.askopenfilename(title="Selecione a tabela Msp",filetypes=(("Arquivo Excel",".xlsx*"),))
+            if not bookMsp:
+                self.window.deiconify()
+                return
+            else:
+                bookCampus = filedialog.askopenfilename(title="Selecione a tabela de Campus",filetypes=(("Arquivo Excel",".xlsx*"),))
+            if not bookCampus:
+                continue
+            break
         
         arquive_tec = Tecnico.CursoTecnico(file_path=bookMsp)
         arquive_tec.spreadsheet_processing(bookMsp,bookCampus)
@@ -64,21 +74,22 @@ class CruzeiroMenuSelection:
         arquive_tec.saving_files(msp_save)
 
     def pos_grad_EAD_command(self):
-        self.root.withdraw()
-        bookMsp = filedialog.askopenfilename(title="Selecione a tabela Msp",filetypes=(("Arquivo Excel",".xlsx*"),))
-        if not bookMsp:
-            self.root.deiconify()
-            return
-        else:
-            bookExp = filedialog.askopenfilename(title="Selecione a tabela de Campus",filetypes=(("Arquivo Excel",".xlsx*"),))
-        if not bookExp:
-            self.root.deiconify()
-            return
-        else:
-            bookRelPolos = filedialog.askopenfilename(title="Selecione a tabela de Relação de Polos da IES",filetypes=(("Arquivo Excel",".xlsx*"),))
-        if not bookRelPolos:
-            self.root.deiconify()
-            return
+        self.window.withdraw()
+        while True:
+            bookMsp = filedialog.askopenfilename(title="Selecione a tabela Msp",filetypes=(("Arquivo Excel",".xlsx*"),))
+            if not bookMsp:
+                self.window.deiconify()
+                return
+            else:
+                bookExp = filedialog.askopenfilename(title="Selecione a tabela de Campus",filetypes=(("Arquivo Excel",".xlsx*"),))
+            if not bookExp:
+                continue
+            else:
+                bookRelPolos = filedialog.askopenfilename(title="Selecione a tabela de Relação de Polos da IES",filetypes=(("Arquivo Excel",".xlsx*"),))
+            if not bookRelPolos:
+                continue
+            break
+
         arquive_pos_grad = Pos_Grad_EAD.PosGraduacaoEAD(file_path=bookMsp)
         arquive_pos_grad.spreadsheet_processing(bookMsp,bookExp,bookRelPolos)
         arquive_pos_grad.check_and_treat_metadata()
@@ -93,5 +104,5 @@ class CruzeiroMenuSelection:
         arquive_pos_grad.save_and_close_rest(bookMsp,bookExp,bookRelPolos)
 
     def return_command(self):
-        self.root.destroy()
+        self.window.destroy()
         Menu_Selection.MenuSelection()

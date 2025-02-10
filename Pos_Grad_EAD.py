@@ -30,6 +30,7 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
             self.polo_pending = True
         self.wk_book_campus.filter_remove(self.tab_campus,7)
         self.wk_book_campus.turn_into_text(self.tab_campus,"G",1)
+        self.total_rows_campus = self.wk_book_campus.extract_last_filled_row(self.tab_campus,2)
     
     def separate_campus_and_apply_xlookup(self):
         self.wk_book_campus.create_tab("Positivo e Unipê")
@@ -50,6 +51,7 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_relation.name_header(self.tab_relat_pos,3,"xlooup")
         self.wk_book_relation.name_header(self.tab_relat_pos,4,"concat")
         self.wk_book_relation.xlook_up("A2",f"'[{self.campus_name}]Positivo e Unipê'!$G:$G",f"'[{self.campus_name}]Positivo e Unipê'!$A:$A",self.tab_relat_pos,f"C2:C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,1)}")
+        self.wk_book_relation.fill_with_value(self.tab_relat_pos,f"C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,3)}",self.tab_relat_pos.range(f"C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,3)}").value)
 
 
     def check_NAs_and_treat(self):
@@ -119,7 +121,9 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_msp.filter_apply(self.tab_msp,2,"POSITIVO - PÓS-GRADUAÇÃO EAD")
         self.wk_book_msp.copy_and_paste(self.tab_msp,self.tab_uni_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",f"A{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2) + 1}")
         self.wk_book_msp.delete_filtered_rows(self.tab_msp,f"A2:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
-        self.wk_book_msp.copy_and_paste(self.tab_relat_pos,self.tab_uni_msp,f"D{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,4)}",f"E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,5) + 1}:E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2)}")
+        self.wk_book_msp.copy_and_paste(self.tab_relat_pos,self.tab_uni_msp,f"D{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,4)}",f"AP{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,5) + 1}:AP{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2)}")
+        self.wk_book_msp.copy_and_paste(self.tab_relat_pos,self.tab_uni_msp,f"C{self.wk_book_relation.extract_last_filled_row(self.tab_relat_pos,4)}",f"E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,5) + 1}:E{self.wk_book_msp.extract_last_filled_row(self.tab_uni_msp,2)}")
+
         self.filter_apply(self.tab_msp,2,"CRUZEIRO DO SUL - PÓS EAD")
 
     def create_copy_and_separate(self,book_path):
@@ -134,13 +138,14 @@ class PosGraduacaoEAD(ArquivoExcel.ArquivoExcel):
         self.wk_book_msp.delete_tab("UNIPE E POSITIVO")
 
     def create_paths_and_fill_columns(self,book_path):
-        for i in range(2,6):
-            if i == 5:
-                self.row_campus_end = self.row_campus_end + 1    
-                self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{self.row_campus_end}")
-            else:    
-                self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{1368 * i}")
-        self.wk_book_msp.copy_and_paste(self.tab_campus,self.tab_msp,"AA1368",f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
+        if self.total_rows_campus < 6825:
+            for i in range(2,6):
+                if i == 5:
+                    self.row_campus_end = self.row_campus_end + 1    
+                    self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{self.row_campus_end}")
+                else:    
+                    self.wk_book_msp.create_file_and_paste_content(f"CRUZEIRO ({i}).xlsx",book_path,self.tab_msp,f"A1:BE{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}",self.tab_campus,f"AA{1368 * i}")
+            self.wk_book_msp.copy_and_paste(self.tab_campus,self.tab_msp,"AA1368",f"E2:E{self.wk_book_msp.extract_last_filled_row(self.tab_msp,2)}")
     
     def finalize_operation_message(self,window):
         message_shoot = CompletionMessage.MessagesPosGradEad(window)
