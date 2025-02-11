@@ -88,10 +88,14 @@ class CruzeiroMenuSelection:
                 bookRelPolos = filedialog.askopenfilename(title="Selecione a tabela de Relação de Polos da IES",filetypes=(("Arquivo Excel",".xlsx*"),))
             if not bookRelPolos:
                 continue
+            else:
+                bookExpPosUni = filedialog.askopenfilename(title="Selecione a tabela de exp da Positivo e Unipe",filetypes=(("Arquivo Excel",".xlsx*"),))
+            if not bookExpPosUni:
+                continue
             break
 
         arquive_pos_grad = Pos_Grad_EAD.PosGraduacaoEAD(file_path=bookMsp)
-        arquive_pos_grad.spreadsheet_processing(bookMsp,bookExp,bookRelPolos)
+        arquive_pos_grad.spreadsheet_processing(bookMsp,bookExp,bookRelPolos,bookExpPosUni)
         arquive_pos_grad.check_and_treat_metadata()
         arquive_pos_grad.separate_campus_and_apply_xlookup()
         arquive_pos_grad.check_NAs_and_treat()
@@ -100,8 +104,8 @@ class CruzeiroMenuSelection:
         arquive_pos_grad.separate_universities()
         arquive_pos_grad.create_copy_and_separate(bookMsp)
         arquive_pos_grad.create_paths_and_fill_columns(bookMsp)
-        arquive_pos_grad.finalize_operation_message(self.root)
-        arquive_pos_grad.save_and_close_rest(bookMsp,bookExp,bookRelPolos)
+        # arquive_pos_grad.finalize_operation_message(self.root)
+        # arquive_pos_grad.save_and_close_rest(bookMsp,bookExp,bookRelPolos)
 
     def return_command(self):
         self.window.destroy()
