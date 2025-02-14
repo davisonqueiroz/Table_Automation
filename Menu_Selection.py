@@ -1,5 +1,6 @@
 import Cruzeiro_Selection
 import customtkinter as ctk
+import Divisor_Menu
 
 
 class MenuSelection:
@@ -32,7 +33,7 @@ class MenuSelection:
         btn_cruzeiro.place(x= 60, y = 160)
 
         btn_to_divide = ctk.CTkButton(self.window,text=" Dividir tabela",height= 70,width=280,text_color= "white",corner_radius= 80,
-                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 25))
+                                     fg_color="#0000FF",bg_color= "#FFFAFA",font=("Arial", 25),command=self.divisor_command)
         btn_to_divide.place(x= 60, y = 245)
 
         btn_exit = ctk.CTkButton(self.window,text=" Sair",height= 50,width=110,text_color= "white",corner_radius= 80,
@@ -44,6 +45,10 @@ class MenuSelection:
     def cruzeiro_command(self):
         self.window.destroy()
         Cruzeiro_Selection.CruzeiroMenuSelection()
+
+    def divisor_command(self):
+        self.window.destroy()
+        Divisor_Menu.TableDivisorMenu()
 
     def quit_command(self):
         self.window.quit()

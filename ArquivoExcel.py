@@ -38,6 +38,9 @@ class ArquivoExcel:
     def select_tab(self,tab_name):
         return self.book.sheets[f'{tab_name}']
     
+    def select_first_tab(self):
+        return self.book.sheets[0]
+    
     def delete_tab(self,tab_name):
         tab_to_delete = self.book.sheets[tab_name]
         tab_to_delete.delete()
@@ -62,6 +65,30 @@ class ArquivoExcel:
         self.wk_book_temporary.save_file(path_save)
         self.wk_book_temporary.close_file()
 
+    def create_file_and_paste(self,path_name,book_path,spreadsheet_copy,range_copy):
+        directory = os.path.dirname(book_path)
+        self.wk_book_temporary = ArquivoExcel()
+        self.wk_book_temporary.create_new_file(directory,path_name)
+        path_save = os.path.join(directory,path_name)
+        path_name = path_name.replace(".xlsx","")
+        self.wk_book_temporary.rename_tab("Sheet1",f"{path_name}")
+        self.tab_temporary =  self.wk_book_temporary.select_tab(f"{path_name}")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,range_copy,"A1")
+        self.wk_book_temporary.save_file(path_save)
+        self.wk_book_temporary.close_file()
+
+    def create_file_and_paste_division(self,path_name,book_path,spreadsheet_copy,range_copy,header_limit):
+        directory = os.path.dirname(book_path)
+        self.wk_book_temporary = ArquivoExcel()
+        self.wk_book_temporary.create_new_file(directory,path_name)
+        path_save = os.path.join(directory,path_name)
+        path_name = path_name.replace(".xlsx","")
+        self.wk_book_temporary.rename_tab("Sheet1",f"{path_name}")
+        self.tab_temporary =  self.wk_book_temporary.select_tab(f"{path_name}")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,f"A1:{header_limit}1","A1")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,range_copy,"A2")
+        self.wk_book_temporary.save_file(path_save)
+        self.wk_book_temporary.close_file()
         #manipulação de linhas
 
     def extract_last_filled_row(self,spreadsheet_tab,column_sheet):
@@ -120,6 +147,10 @@ class ArquivoExcel:
             position_header = -1
         position_header = xw.utils.col_name(position_header)
         return position_header
+    
+    def obtain_final_header(self,spreadsheet_tab):
+        header = spreadsheet_tab.range("A1").expand("right").last_cell.column
+        return xw.utils.col_name(header)
     
 
     #uso de formulas 
