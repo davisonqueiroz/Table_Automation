@@ -1,6 +1,7 @@
 import xlwings as xw
 from xlwings.constants import SortOrder
 import os
+import math
 
 class ArquivoExcel:
     def __init__(self,file_path = None, visibility = True, filtered = False):
@@ -37,6 +38,9 @@ class ArquivoExcel:
     def select_tab(self,tab_name):
         return self.book.sheets[f'{tab_name}']
     
+    def select_first_tab(self):
+        return self.book.sheets[0]
+    
     def delete_tab(self,tab_name):
         tab_to_delete = self.book.sheets[tab_name]
         tab_to_delete.delete()
@@ -60,10 +64,38 @@ class ArquivoExcel:
         self.wk_book_temporary.copy_and_paste(second_copy_spreadsheet,self.tab_temporary,second_copy_range,f"E2:E{self.wk_book_temporary.extract_last_filled_row(self.tab_temporary,2)}")
         self.wk_book_temporary.save_file(path_save)
         self.wk_book_temporary.close_file()
+
+    def create_file_and_paste(self,path_name,book_path,spreadsheet_copy,range_copy):
+        directory = os.path.dirname(book_path)
+        self.wk_book_temporary = ArquivoExcel()
+        self.wk_book_temporary.create_new_file(directory,path_name)
+        path_save = os.path.join(directory,path_name)
+        path_name = path_name.replace(".xlsx","")
+        self.wk_book_temporary.rename_tab("Sheet1",f"{path_name}")
+        self.tab_temporary =  self.wk_book_temporary.select_tab(f"{path_name}")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,range_copy,"A1")
+        self.wk_book_temporary.save_file(path_save)
+        self.wk_book_temporary.close_file()
+
+    def create_file_and_paste_division(self,path_name,book_path,spreadsheet_copy,range_copy,header_limit):
+        directory = os.path.dirname(book_path)
+        self.wk_book_temporary = ArquivoExcel()
+        self.wk_book_temporary.create_new_file(directory,path_name)
+        path_save = os.path.join(directory,path_name)
+        path_name = path_name.replace(".xlsx","")
+        self.wk_book_temporary.rename_tab("Sheet1",f"{path_name}")
+        self.tab_temporary =  self.wk_book_temporary.select_tab(f"{path_name}")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,f"A1:{header_limit}1","A1")
+        self.wk_book_temporary.copy_and_paste(spreadsheet_copy,self.tab_temporary,range_copy,"A2")
+        self.wk_book_temporary.save_file(path_save)
+        self.wk_book_temporary.close_file()
         #manipulação de linhas
 
     def extract_last_filled_row(self,spreadsheet_tab,column_sheet):
         return spreadsheet_tab.cells(1,column_sheet).end('down').row
+    
+    def extract_end_row_up(self,spreadsheet_tab,last_row):
+        return spreadsheet_tab.cells(last_row,2).end('up').row
     
     def create_row(self,spreadsheet_tab,row_position):
         spreadsheet_tab.cells(row_position,1).api.EntireRow.Insert()
@@ -106,6 +138,20 @@ class ArquivoExcel:
 
     def delete_column(self,spreadsheet_tab,column_position):
         spreadsheet_tab.cells(1,column_position).api.EntireColumn.Delete()
+
+    def verify_position_value_header(self,spreadsheet_tab,value_search):
+        header = spreadsheet_tab.range("A1").expand("right").value
+        if value_search in header:
+            position_header = header.index(value_search) + 1
+        else:
+            position_header = -1
+        position_header = xw.utils.col_name(position_header)
+        return position_header
+    
+    def obtain_final_header(self,spreadsheet_tab):
+        header = spreadsheet_tab.range("A1").expand("right").last_cell.column
+        return xw.utils.col_name(header)
+    
 
     #uso de formulas 
 
@@ -221,3 +267,46 @@ class ArquivoExcel:
 
     def fill_with_value(self,spreadsheet_tab,fill_range,value):
         spreadsheet_tab.range(fill_range).value = value
+
+    def check_that_it_does_not_exceed_the_limit(self,total_rows,divide_for,spreadsheet_tab):
+        overtake = False
+        total_loops = total_rows/divide_for
+        total_loops = math.ceil(total_loops)
+
+        for i in range(1,total_loops + 1):
+            if (i == 1):
+                values = spreadsheet_tab.range(f"Z2:Z{divide_for}").value
+                separator = ","
+                simul_textjoin = separator.join(values)
+                if(len(simul_textjoin) > 32767):
+                    overtake = True
+                    break
+            elif i == total_loops - 1:
+                values = spreadsheet_tab.range(f"Z{divide_for * i - 1}:Z{self.extract_last_filled_row(spreadsheet_tab,1)}").value
+                values = list(filter(None,values))
+                separator = ","
+                simul_textjoin = separator.join(values)
+                if(len(simul_textjoin) > 32767):
+                    overtake = True
+                    break
+                values = spreadsheet_tab.range(f"Z{divide_for * i - 1}:Z{divide_for * i}").value
+                values = list(filter(None,values))
+                separator = ","
+                simul_textjoin = separator.join(values)
+                if(len(simul_textjoin) > 32767):
+                    overtake = True
+                    break
+            else:
+                values = spreadsheet_tab.range(f"Z{divide_for * (i - 1) + 1}:Z{divide_for * i}").value
+                values = list(filter(None,values))
+                separator = ","
+                simul_textjoin = separator.join(values)
+                if(len(simul_textjoin) > 32767):
+                    overtake = True
+                    break
+        return overtake
+    
+    def number_usable_in_for(self,total_rows,divide_for):
+        total_loops = total_rows/divide_for
+        total_loops = math.ceil(total_loops) + 1
+        return total_loops
