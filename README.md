@@ -14,7 +14,23 @@ Pode ser utilizado para processos especificos da Cruzeiro do Sul assim como para
 ✅ Mensagens de finalização e alertas    
 
 ## 🖥️ Interface Gráfica
-A aplicação conta com uma interface gráfica simples, moderna e intuitiva desenvolvida em customtkinter.
+A aplicação conta com uma interface gráfica simples, moderna e intuitiva desenvolvida em customtkinter.    
+
+## 📸 Exemplos da Interface Gráfica
+
+### Menus de seleção: 
+<p>
+    <img src="images/menu_inicial.png" width="350 "/>
+    <img src="images/menu_cruzeiro.png" width="350 "/>
+</p>
+
+ ### Seletor de arquivos(informa qual arquivo necessário na parte superior):
+ <img src="images/seletor.png" width="630"/>
+
+
+ ### Interface de divisão de tabelas: 
+ <img src="images/divisor.png" width="430"/>
+
 
 ## 🛠 Como Usar
 1. Execute o programa (`python Main.py`)  
