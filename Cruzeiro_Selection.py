@@ -104,8 +104,8 @@ class CruzeiroMenuSelection:
         arquive_pos_grad.separate_universities()
         arquive_pos_grad.create_copy_and_separate(bookMsp)
         arquive_pos_grad.create_paths_and_fill_columns(bookMsp)
-        # arquive_pos_grad.finalize_operation_message(self.root)
-        # arquive_pos_grad.save_and_close_rest(bookMsp,bookExp,bookRelPolos)
+        arquive_pos_grad.finalize_operation_message(self.root)
+        arquive_pos_grad.save_and_close_rest(bookMsp,bookExp,bookRelPolos)
 
     def return_command(self):
         self.window.destroy()
